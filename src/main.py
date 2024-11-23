@@ -4,7 +4,7 @@ import time
 from src.enums.accuracy_metric import AccuracyMetric
 from src.models.xgb_regressor import XGBRegressorWrapper
 from src.pipelines.dt_pipeline import save_data_model
-from src.pipelines.housing_prices_competition_dt_pipeline import HousingPricesCompetitionDTPipeline
+from src.pipelines.mental_health_dt_pipeline import MentalHealthDTPipeline
 from src.trainers.simple_trainer import SimpleTrainer
 from src.trainers.fast_cross_trainer import FastCrossTrainer
 from src.trainers.accurate_cross_trainer import AccurateCrossTrainer
@@ -18,13 +18,15 @@ from src.trainers.trainer import save_model
 
 def load_data():
     # Load the data
-    iowa_file_path = '../resources/train.csv'
-    home_data = pd.read_csv(iowa_file_path)
+    file_path = '../resources/train.csv'
+    data = pd.read_csv(file_path)
+    # standardize column names
+    data = data.rename(columns=lambda x: re.sub('[^A-Za-z0-9_]+', '_', x))
 
     # Remove rows with missing target, separate target from predictors
-    pruned_home_data = home_data.dropna(axis=0, subset=['SalePrice'])
-    y = pruned_home_data.SalePrice
-    X = pruned_home_data.drop(['SalePrice'], axis=1)
+    pruned_data = data.dropna(axis=0, subset=['Depression'])
+    y = pruned_data['Depression']
+    X = pruned_data.drop(['Depression'], axis=1)
     return X, y
 
 
@@ -36,7 +38,7 @@ print("Saving data model...")
 save_data_model(X)
 
 # instantiate data pipeline
-pipeline = HousingPricesCompetitionDTPipeline(X, True)
+pipeline = MentalHealthDTPipeline(X, True)
 
 # pick a model, a trainer and an optimizer
 model_type = XGBRegressorWrapper()
