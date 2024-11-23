@@ -39,7 +39,6 @@ jobs:
         run: |
           git checkout --theirs .
           git checkout --ours src/main.py
-          git checkout --ours src/pipelines/housing_prices_competition_dt_pipeline.py
           git checkout --ours resources/
           git checkout --ours .github/
           git checkout --ours README.md
