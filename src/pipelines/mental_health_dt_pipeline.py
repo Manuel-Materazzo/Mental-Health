@@ -1,3 +1,4 @@
+import re
 from pandas import DataFrame
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
@@ -8,29 +9,40 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from src.pipelines.dt_pipeline import DTPipeline
 
 sleep_dictionary = {
+    '0': 0,
+    'No': 0,
     '1-2 hours': 1.5,
     '1-3 hours': 2,
     '2-3 hours': 2.5,
-    'Unhealthy': 3,  # probably wrong
+    '20-21 hours': 2.5,  # probably per week
+    'Unhealthy': 3,
     '3-4 hours': 3.5,
     '3-6 hours': 3.5,
     '1-6 hours': 4,
     'Less than 5 hours': 4,
     '4-5 hours': 4.5,
     '4-6 hours': 5,
+    '35-36 hours': 5,  # probably per week
     '5-6 hours': 5.5,
-    'Moderate': 6,  # probably wrong
-    'Work_Study_Hours': 6,  # probably wrong
+    'Moderate': 6,
+    '45': 6,  # probably per week
+    '40-45 hours': 6,  # probably per week
     '6-7 hours': 6.5,
+    '45-48 hours': 6.5,  # probably per week
     '6-8 hours': 7,
     '9-5': 7,
     '9-5 hours': 7,
+    '49 hours': 7,  # probably per week
     '7-8 hours': 7.5,
     '9-6 hours': 7.5,
     '8 hours': 8,
     '10-6 hours': 8,
+    '55-66 hours': 8.5,  # probably per week
+    '8-89 hours': 8.5,  # probably typo
     '8-9 hours': 8.5,
-    "More than 8 hours": 9,
+    '50-75 hours': 8.5,  # probably per week
+    'More than 8 hours': 9,
+    '60-65 hours': 9,  # probably per week
     '9-11 hours': 10,
     '10-11 hours': 10.5,
 }
@@ -38,9 +50,12 @@ sleep_dictionary = {
 diet_dictionary = {
     'More Healty': 0,
     'Healthy': 1,
+    '5 Healthy': 1,
+    'Mealy': 2,
     'Less than Healthy': 2,
     'Less Healthy': 2,
     'Moderate': 3,
+    '5 Unhealthy': 4,
     'Unhealthy': 4,
     'No Healthy': 4,
 }
@@ -60,6 +75,12 @@ yes_no_dictionary = {
     'Yes': 1,
 }
 
+cols_profession_to_delete = [
+    'PhD', 'MBBS', 'B.Ed', 'M.Ed', 'BBA', 'MBA', 'LLM', 'BCA', 'B.Com', 'BE', 'Simran', '3M',
+    'Name', 'No', '24th', 'Unveil', 'Unhealthy', 'Yuvraj', 'Yogesh', 'Patna', 'Nagpur',
+    'Pranav', 'Visakhapatnam', 'Moderate', 'Manvi', 'Yogesh', 'Samar', 'Surat'
+]
+
 
 class CustomImputer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
@@ -67,6 +88,9 @@ class CustomImputer(BaseEstimator, TransformerMixin):
 
     def transform(self, X):
         X = X.copy()
+
+        # delete weird professions
+        X['Profession'] = X['Profession'].mask(X['Profession'].isin(cols_profession_to_delete))
 
         # fill metric numericals with values that make sense (eg: if working, then no study stress)
         X['Academic_Pressure'] = X['Academic_Pressure'].fillna(0)
@@ -80,12 +104,47 @@ class CustomImputer(BaseEstimator, TransformerMixin):
         X['Dietary_Habits'] = X['Dietary_Habits'].fillna('Unknown')
         X['Degree'] = X['Degree'].fillna('Unknown')
 
+        return X
+
+
+class CustomTransformer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def fix_name(self, degree):
+        # if it's not a string, do nothing
+        if not isinstance(degree, str):
+            return degree
+
+        # remove special characters
+        degree = re.sub('[^A-Za-z0-9_]+', '', degree)
+
+        # lowercase
+        degree = degree.lower()
+
+        return degree
+
+    def transform(self, X):
+        X = X.copy()
+
+        # standardize names to avoid duplicates and misspellings
+        X['Degree'] = X['Degree'].apply(self.fix_name)
+        X['Profession'] = X['Profession'].apply(self.fix_name)
+
+        return X
+
+
+class DictionaryImputer(BaseEstimator, TransformerMixin):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        X = X.copy()
+
         # Assign values based on the dictionaries and set -1 for empty values
         X['Sleep_Duration'] = X['Sleep_Duration'].apply(
             lambda x: sleep_dictionary.get(x, -1) if x != '' else -1)
-        # X['Profession'] = X['Profession'].apply(lambda x: .get(x, -1) if x != '' else -1)
         X['Dietary_Habits'] = X['Dietary_Habits'].apply(lambda x: diet_dictionary.get(x, -1) if x != '' else -1)
-        # X['Degree'] = X['Degree'].apply(lambda x: .get(x, -1) if x != '' else -1)
         X['Gender'] = X['Gender'].apply(lambda x: gender_dictionary.get(x, -1) if x != '' else -1)
         X['Have_you_ever_had_suicidal_thoughts_'] = X['Have_you_ever_had_suicidal_thoughts_'].apply(
             lambda x: yes_no_dictionary.get(x, -1) if x != '' else -1
@@ -130,6 +189,12 @@ class MentalHealthDTPipeline(DTPipeline):
 
         # Bundle preprocessing
         return Pipeline(steps=[
+            # imputate data with reasonable values
             ('custom_imputer', CustomImputer()),
+            # standardize degree and profession names to avoid duplicates
+            ('custom_transformer', CustomTransformer()),
+            # convert categoricals to numericals using dictionaries
+            ('dictionary_imputer', DictionaryImputer()),
+            # standard preprocessing for remaining missing data
             ('preprocessor', preprocessor)
         ], memory=None)
