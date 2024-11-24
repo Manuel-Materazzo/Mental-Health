@@ -3,10 +3,11 @@ from pandas import DataFrame
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import OrdinalEncoder
+from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from sklearn.base import BaseEstimator, TransformerMixin
 
 from src.pipelines.dt_pipeline import DTPipeline
+from src.pipelines.dynamic_column_transformer import DynamicColumnTransformer
 
 sleep_dictionary = {
     '0': 0,
@@ -86,11 +87,32 @@ class CustomImputer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         return self
 
+    def compute_hours_column(self, row, professional):
+        if row['Working_Professional_or_Student'] == professional:
+            return row['Work_Study_Hours']
+        else:
+            return 0
+
+    def compute_work_stress_column(self, row):
+        if row['Working_Professional_or_Student'] == 1:
+            return row['Financial_Stress'] + row['Work_Pressure'] - row['Job_Satisfaction']
+        else:
+            return 0
+
+    def compute_academic_stress_column(self, row):
+        if row['Working_Professional_or_Student'] == 0:
+            return row['Financial_Stress'] + row['Academic_Pressure'] - row['Study_Satisfaction']
+        else:
+            return 0
+
     def transform(self, X):
         X = X.copy()
 
         # delete weird professions
         X['Profession'] = X['Profession'].mask(X['Profession'].isin(cols_profession_to_delete))
+
+        # create "student" profession
+        # X.loc[(X['Working_Professional_or_Student'] == 'Student') & (X['Profession'].isnull()), 'Profession'] = 'Student'
 
         # fill metric numericals with values that make sense (eg: if working, then no study stress)
         X['Academic_Pressure'] = X['Academic_Pressure'].fillna(0)
@@ -99,10 +121,26 @@ class CustomImputer(BaseEstimator, TransformerMixin):
         X['Job_Satisfaction'] = X['Job_Satisfaction'].fillna(0)
         X['CGPA'] = X['CGPA'].fillna(-1)  # we want to emphasize that it's a missing value
 
+        # join columns and 0fill remainings
+        # X['Satisfaction'] = X['Study_Satisfaction'].fillna(X['Job_Satisfaction'])
+        # X['Pressure'] = X['Academic_Pressure'].fillna(X['Work_Pressure'])
+        # X['Satisfaction'] = X['Satisfaction'].fillna(0)
+        # X['Pressure'] = X['Pressure'].fillna(0)
+
         # fill unknown categoricals
         X['Profession'] = X['Profession'].fillna('Unknown')
         X['Dietary_Habits'] = X['Dietary_Habits'].fillna('Unknown')
         X['Degree'] = X['Degree'].fillna('Unknown')
+
+        # additional stress columns
+        # X['Work_Stress'] = X.apply(lambda row: self.compute_work_stress_column(row), axis=1)
+        # X['Academic_Stress'] = X.apply(lambda row: self.compute_academic_stress_column(row), axis=1)
+
+        # distinct study and work hours
+        # X['Work_Hours'] = X.apply(lambda row: self.compute_hours_column(row, 1), axis=1)
+        # X['Study_Hours'] = X.apply(lambda row: self.compute_hours_column(row, 0), axis=1)
+
+        #X.drop(['Work_Study_Hours'], axis=1, inplace=True)
 
         return X
 
@@ -174,7 +212,10 @@ class MentalHealthDTPipeline(DTPipeline):
             ])
 
         # Preprocessing for numerical data
-        numerical_transformer = SimpleImputer(strategy='median')
+        numerical_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='median')),
+            # ('scale', StandardScaler())
+        ], memory=None)
 
         # Preprocessing for categorical data
         categorical_transformer = Pipeline(steps=[
