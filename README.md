@@ -2,76 +2,43 @@
   <div>
     <img src="resources/logo.png" width="230" alt="Warp" />
   </div>
-    <h1>BoostUtils</h1>
-  <b>
-    A Python framework for training, optimizing and deploying XGBoost models.
-  </b><br>
-<small>Simplify your fitting and deployment routine today!</small>
-
-
-<hr />
-<img src="https://img.shields.io/github/license/Manuel-Materazzo/BoostUtils?style=flat-square&logo=opensourceinitiative&logoColor=white&color=gold" alt="license">
-<img src="https://img.shields.io/github/last-commit/Manuel-Materazzo/BoostUtils?style=flat-square&logo=git&logoColor=white&color=gold" alt="last-commit">
-<img src="https://img.shields.io/github/languages/top/Manuel-Materazzo/BoostUtils?style=flat-square&color=gold" alt="repo-top-language">
+    <h1>Mental Health Prediction</h1>
 </div>
 
-## ☄️ Features
+Mental health is a critical aspect of overall well-being, yet it is often overlooked or stigmatized. In today's fast-paced and stress-filled world, understanding and addressing mental health issues has become more important than ever.<br>
+By promoting a data-driven understanding of mental health, we can help reduce the stigma associated with mental health issues. Recognizing that factors like job satisfaction, work hours, and financial stress can impact mental health can foster a more supportive and empathetic environment.
 
-|     |                  Feature                   | Description                                                                                                                                                           |
-|:----|:------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 🔄  | **Flexible Training & Validation Options** | Supports multiple methods for training and validating models, including                                                                                               |
-| 🛠️ |      **Hyperparameter Optimization**       | Includes built-in hyperparameter tuning with options for **Grid Search**, **Bayesian optimization**, and **Optuna optimization**                                      |
-| ⚙️  |            **Easy Integration**            | Quickly get started with a new machine learning project by cloning or forking BoostUtils, you just need to defne a custom pipeline for your dataset.                  |
-| 🌐  |            **Model Deployment**            | Offers model and pipeline serialization and integrates automatically with FastAPI for serving models predictions as an API endpoint.                                  |
-| 🐳  |            **Containerization**            | Includes Dockerfile and Docker Compose configuration for straightforward deployment in any environment.                                                               |
-| 🤖  |              **CI/CD Ready**               | GitHub Action templates included: <ul><li>🏗️ Automated Docker image build and push</li><li>🔄 Auto-merge requests to sync updates from the base repository</li></ul> |
+## 🎯 **Problem Statement**
+The objective is to develop a predictive model that can accurately identify individuals at risk of depression based on their responses to lifestyle and demographic factors.
 
-## 🏠 Example project
-A complete example is provided in the repository, showcasing BoostUtils with a home price prediction model. This example includes:
+- **Identify Key Contributors**: Determine which factors are most significantly associated with depression risk.
 
-The dataset for training
-A Docker configuration for easy deployment
+- **Predict Depression Risk**: Build a model that can predict whether an individual is at risk of depression, helping in early identification and intervention strategies.
 
-### 🌐 Live Preview
+- **Provide Actionable Insights**: Offer insights that could inform public health policies and individual lifestyle changes to mitigate the risk of depression.
 
-Check out the live preview on [Render](https://boost-utils-example.onrender.com/docs) and try out inference.\
-Note: The live preview will cold-start as you enter the link, it could take up to 1min to fully load.
+By achieving these objectives, the project aims to contribute to the field of mental health research, providing a non-clinical, data-driven approach to understanding and predicting depression risks.
 
-## 🚀 Getting Started
+## 📊 **Dataset Description**
+This dataset was collected through an anonymous survey conducted between January and June 2023, focusing on understanding depression risk factors among adults. The survey targeted both working professionals and students, collecting comprehensive information about their demographic details, academic/work life, lifestyle factors, mental health history, and current mental well-being status.
 
-
-
-### 🐳 Docker prebuilt
-
-1. **Pull the Docker Image**:
-   ```sh
-   docker pull ghcr.io/manuel-materazzo/boost-utils-example:latest
-    ```
-2. **Run the Container**:
-   ```sh
-   docker run -d -p 8080:80 manuel-materazzo/boost-utils-example
-    ```
-3. **Access the API**: Navigate to `http://localhost:8080/docs` or `http://localhost:8080/redoc` to explore the
-   interactive API documentation and start making predictions!
-
-### 🐳🔧 Docker compose self-build
-
-1. **Run docker compose**:
-   ```sh
-   docker-compose up
-   ```
-
-### 📦 Manual installation
-
-1. **Clone BoostUtils repository**:
-   ```sh
-   git clone https://github.com/your-username/BoostUtils.git
-   cd BoostUtils
-   ```
- 2. **Install the required dependencies**:  
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-## 📜 License
-This project is licensed under the MIT License. See the `LICENSE` file for more details.
+### 📜 **Dataset Columns**
+Here's a breakdown of the columns in the dataset:
+- `Name`: Identifier for participants (anonymized)
+- `Gender`: Participant's gender identity
+- `Age`: Participant's age
+- `City`: Location of residence
+- `Working Professional or Student`: Current occupation category
+- `Profession`: Specific profession/field of work
+- `Degree`: Educational qualification
+- `CGPA`: Academic performance measure
+- `Academic Pressure`: Level of pressure from academic responsibilities
+- `Work Pressure`: Level of pressure from work responsibilities
+- `Study Satisfaction`: Level of satisfaction with studies
+- `Job Satisfaction`: Level of satisfaction with current job
+- `Work/Study Hours`: Daily hours spent on work/study
+- `Sleep Duration`: Average daily sleep hours
+- `Dietary Habits`: Eating patterns and food preferences
+- `Have you ever had suicidal thoughts?`: History of suicidal ideation (Yes/No)
+- `Financial Stress`: Level of stress related to financial situation
+- `Family History of Mental Illness`: Presence of mental illness in family (Yes/No)
