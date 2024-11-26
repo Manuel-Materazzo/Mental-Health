@@ -28,6 +28,8 @@ def load_data():
     pruned_data = data.dropna(axis=0, subset=['Depression'])
     y = pruned_data['Depression']
     X = pruned_data.drop(['Depression'], axis=1)
+    X = X.drop(['Name'], axis=1)
+    X = X.drop(['City'], axis=1)
     return X, y
 
 
