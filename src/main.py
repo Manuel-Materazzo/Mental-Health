@@ -41,7 +41,7 @@ print("Saving data model...")
 save_data_model(X)
 
 # instantiate data pipeline
-pipeline = MentalHealthDTPipeline(X, True)
+pipeline = MentalHealthDTPipeline(X)
 
 # pick a model, a trainer and an optimizer
 model_type = XGBClassifierWrapper()

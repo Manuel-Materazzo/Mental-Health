@@ -36,7 +36,7 @@ print("Saving data model...")
 save_data_model(X)
 
 # instantiate data pipeline
-pipeline = HousingPricesCompetitionDTPipeline(X, True)
+pipeline = HousingPricesCompetitionDTPipeline(X)
 
 # create model trainer and optimizer for catboost
 catboost_model_type = CatBoostWrapper()

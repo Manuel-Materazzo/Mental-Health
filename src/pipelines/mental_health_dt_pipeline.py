@@ -11,18 +11,12 @@ from src.pipelines.dynamic_column_transformer import DynamicColumnTransformer
 
 
 class MentalHealthDTPipeline(DTPipeline):
-    def __init__(self, X: DataFrame, imputation_enabled: bool):
-        super().__init__(X, imputation_enabled)
+    def __init__(self, X: DataFrame):
+        super().__init__(X)
 
     def build_pipeline(self) -> Pipeline | ColumnTransformer:
         # Encoding for categorical data
         categorical_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
-
-        # if imputation is disabled, just encode categorical columns
-        if not self.imputation_enabled:
-            return ColumnTransformer(transformers=[
-                ('cat', categorical_encoder, self.categorical_cols)
-            ])
 
         # Preprocessing for numerical data
         numerical_transformer = Pipeline(steps=[
