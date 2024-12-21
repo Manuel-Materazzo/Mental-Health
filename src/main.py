@@ -7,13 +7,9 @@ from src.enums.optimization_direction import OptimizationDirection
 from src.models.xgb_classifier import XGBClassifierWrapper
 from src.pipelines.dt_pipeline import save_data_model
 from src.pipelines.mental_health_dt_pipeline import MentalHealthDTPipeline
-from src.trainers.simple_trainer import SimpleTrainer
-from src.trainers.fast_cross_trainer import FastCrossTrainer
-from src.trainers.accurate_cross_trainer import AccurateCrossTrainer
+from src.preprocessors.mental_health_data_preprocessor import MentalHealthDataPreprocessor
 from src.trainers.cached_accurate_cross_trainer import CachedAccurateCrossTrainer
 from src.hyperparameter_optimizers.custom_grid_optimizer import CustomGridOptimizer
-from src.hyperparameter_optimizers.hyperopt_bayesian_optimizer import HyperoptBayesianOptimizer
-from src.hyperparameter_optimizers.optuna_optimizer import OptunaOptimizer
 from src.trainers.trainer import save_model
 
 
@@ -21,15 +17,14 @@ def load_data():
     # Load the data
     file_path = '../resources/train.csv'
     data = pd.read_csv(file_path)
-    # standardize column names
-    data = data.rename(columns=lambda x: re.sub('[^A-Za-z0-9_]+', '_', x))
 
     # Remove rows with missing target, separate target from predictors
-    pruned_data = data.dropna(axis=0, subset=['Depression'])
-    y = pruned_data['Depression']
-    X = pruned_data.drop(['Depression'], axis=1)
-    X = X.drop(['Name'], axis=1)
-    X = X.drop(['City'], axis=1)
+    data.dropna(axis=0, subset=['Depression'], inplace=True)
+    y = data['Depression']
+    X = data.drop(['Depression'], axis=1)
+
+    # standardize column names
+    X = X.rename(columns=lambda x: re.sub('[^A-Za-z0-9_]+', '_', x))
     return X, y
 
 
@@ -40,18 +35,24 @@ X, y = load_data()
 print("Saving data model...")
 save_data_model(X)
 
-# instantiate data pipeline
+# instantiate preprocessor
+preprocessor = MentalHealthDataPreprocessor()
+
+# preprocess data
+preprocessor.preprocess_data(X)
+
+# instantiate pipeline
 pipeline = MentalHealthDTPipeline(X)
 
 # pick a model, a trainer and an optimizer
-model_type = XGBClassifierWrapper()
+model_type = XGBClassifierWrapper(early_stopping_rounds=50)
 trainer = CachedAccurateCrossTrainer(pipeline, model_type, X, y, metric=AccuracyMetric.AUC)
-optimizer = CustomGridOptimizer(trainer, model_type)
+optimizer = CustomGridOptimizer(trainer, model_type, direction=OptimizationDirection.MAXIMIZE)
 
 # optimize parameters
 print("Tuning Hyperparameters...")
 start = time.time()
-optimized_params = optimizer.tune(X, y, 0.03, direction=OptimizationDirection.MAXIMIZE)
+optimized_params = optimizer.tune(X, y, 0.03)
 print(optimized_params)
 end = time.time()
 
@@ -64,6 +65,10 @@ print()
 # fit complete_model on all data from the training data
 print("Fitting complete model...")
 complete_model = trainer.train_model(X, y, iterations=iterations, params=optimized_params)
+
+# save preprocessor on target directory
+print("Saving preprocessor...")
+preprocessor.save_preprocessor()
 
 # save trained pipeline on target directory
 print("Saving pipeline...")
