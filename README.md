@@ -93,3 +93,42 @@ The high depression rates among Class 12 students appear to be linked to the ext
   - Parents' expectations about academic performance (33.4%)
 
 These findings underscore the need to address the academic and societal pressures faced by adolescents in their final year of secondary education to improve their mental health outcomes.
+
+## 🚀 Getting Started
+
+### 🌐 Live Preview
+
+Check out the live preview on [Render](https://mental-health-pk3l.onrender.com/docs) and try out inference.\
+Note: The live preview will cold-start as you enter the link, it could take up to 1min to fully load.
+
+### 🐳 Docker prebuilt
+
+1. **Pull the Docker Image**:
+   ```sh
+   docker pull ghcr.io/manuel-materazzo/mental-health:latest
+    ```
+2. **Run the Container**:
+   ```sh
+   docker run -d -p 8080:80 manuel-materazzo/mental-health
+    ```
+3. **Access the API**: Navigate to `http://localhost:8080/docs` or `http://localhost:8080/redoc` to explore the
+   interactive API documentation and start making predictions!
+
+### 🐳🔧 Docker compose self-build
+
+1. **Run docker compose**:
+   ```sh
+   docker-compose up
+   ```
+
+### 📦 Manual installation
+
+1. **Clone BoostUtils repository**:
+   ```sh
+   git clone https://github.com/Manuel-Materazzo/Mental-Health.git
+   cd Mental-Health
+   ```
+2. **Install the required dependencies**:
+   ```sh
+   pip install -r requirements.txt
+   ```
