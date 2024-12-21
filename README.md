@@ -51,6 +51,14 @@ Here's a breakdown of the columns in the dataset:
 ## 📝 **Results**
 Training the predictive model provided significant insights to better understand the factors influencing depression risk.
 
+### 🏆 **Competition Result**
+The model was tested against an unseen set of data and scored AUC 0.94003 on [this](https://www.kaggle.com/competitions/playground-series-s4e11/overview) competition.<br> 
+This performance is just 0.00181 away from the top solution in terms of accuracy.
+
+### 📉 **Cross validation Loss Graph**
+Cross validation AUC loss shows homogeneous accuracy of ~0.97547 over all 5 folds.
+![Cross validation Loss Graph](resources/loss.png)
+
 ### 🌟 **Feature Importance**
 The feature importance graph highlights the most influential factors in predicting depression risk. This allows us to identify key contributors and understand which variables have the most significant impact on our model's predictions.
 ![Feature Importance Graph](resources/importance.png)
@@ -85,11 +93,3 @@ The high depression rates among Class 12 students appear to be linked to the ext
   - Parents' expectations about academic performance (33.4%)
 
 These findings underscore the need to address the academic and societal pressures faced by adolescents in their final year of secondary education to improve their mental health outcomes.
-
-### 🏆 **Competition Result**
-The model was tested against an unseen set of data and scored AUC 0.94003 on [this](https://www.kaggle.com/competitions/playground-series-s4e11/overview) competition.<br> 
-This performance is just 0.00181 away from the top solution in terms of accuracy.
-
-### 📉 **Cross validation Loss Graph**
-Cross validation AUC loss shows homogeneous accuracy of ~0.97547 over all 5 folds.
-![Cross validation Loss Graph](resources/loss.png)
