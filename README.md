@@ -20,7 +20,12 @@ The objective is to develop a predictive model that can accurately identify indi
 By achieving these objectives, the project aims to contribute to the field of mental health research, providing a non-clinical, data-driven approach to understanding and predicting depression risks.
 
 ## 📊 **Dataset Description**
-This dataset was collected through an anonymous survey conducted between January and June 2023, focusing on understanding depression risk factors among adults. The survey targeted both working professionals and students, collecting comprehensive information about their demographic details, academic/work life, lifestyle factors, mental health history, and current mental well-being status.
+This dataset was collected through an anonymous survey conducted between January and June 2023, 
+focusing on understanding depression risk factors among adults. The survey targeted both working professionals and students, 
+collecting comprehensive information about their demographic details, academic/work life, lifestyle factors, mental health history, 
+and current mental well-being status.
+
+The original dataset is available [here](https://www.kaggle.com/datasets/sumansharmadataworld/depression-surveydataset-for-analysis/data).
 
 ### 📜 **Dataset Columns**
 Here's a breakdown of the columns in the dataset:
@@ -42,3 +47,49 @@ Here's a breakdown of the columns in the dataset:
 - `Have you ever had suicidal thoughts?`: History of suicidal ideation (Yes/No)
 - `Financial Stress`: Level of stress related to financial situation
 - `Family History of Mental Illness`: Presence of mental illness in family (Yes/No)
+
+## 📝 **Results**
+Training the predictive model provided significant insights to better understand the factors influencing depression risk.
+
+### 🌟 **Feature Importance**
+The feature importance graph highlights the most influential factors in predicting depression risk. This allows us to identify key contributors and understand which variables have the most significant impact on our model's predictions.
+![Feature Importance Graph](resources/importance.png)
+
+### 📈 **Key Findings**
+1. **History of Suicidal Thoughts**: The most significant factor affecting depression risk, indicating the critical need for addressing this in mental health interventions.
+2. **Academic Pressure**: A major contributor, highlighting the impact of academic stress on mental health.
+3. **Age**: An important predictor, with certain age groups being more vulnerable to depression.
+4. **Profession**: The type of profession plays a notable role in depression risk, suggesting that some fields may be more stressful than others.
+5. **Financial Stress**: A strong correlation with increased depression risk, emphasizing the importance of financial stability.
+6. **Work Pressure**: High levels of work pressure significantly contribute to depression risk.
+7. **Job Satisfaction**: Low job satisfaction is a key predictor of depression.
+8. **Occupation Category**: Being a working professional or a student also influences depression risk.
+9. **Dietary Habits**: Eating patterns and food preferences are associated with mental health.
+10. **Work/Study Hours**: Extensive work or study hours are linked to higher depression risk.
+
+
+#### 📚 **Class 12 and Depression Risk**
+
+Further data analysis reveals that Class 12 students have a disproportionately high chance of being depressed compared to other degrees.
+
+Class 12 in India (where data was collected) corresponds to the final year of secondary high school, typically involving students aged 17-18. This period is marked by significant academic pressure as students prepare for critical examinations that impact their future educational and career opportunities.
+
+##### 💡 **Hypothesis: Academic Pressure**
+The high depression rates among Class 12 students appear to be linked to the extreme pressure to perform academically. Sources indicate that this pressure peaks during the final year of school.
+
+##### 🔬 **Supporting Evidence**
+- **Research from the NIH**: A study in Karnataka, India, found that 28% of Grade 11 and 26% of Grade 12 students experience high or extreme stress.
+- **Sources of Stress**: Major stressors include:
+  - Lack of time for revision (38.7%)
+  - Academic queries from neighbors or relatives (34.4%)
+  - Parents' expectations about academic performance (33.4%)
+
+These findings underscore the need to address the academic and societal pressures faced by adolescents in their final year of secondary education to improve their mental health outcomes.
+
+### 🏆 **Competition Result**
+The model was tested against an unseen set of data and scored AUC 0.94003 on [this](https://www.kaggle.com/competitions/playground-series-s4e11/overview) competition.<br> 
+This performance is just 0.00181 away from the top solution in terms of accuracy.
+
+### 📉 **Cross validation Loss Graph**
+Cross validation AUC loss shows homogeneous accuracy of ~0.97547 over all 5 folds.
+![Cross validation Loss Graph](resources/loss.png)
